@@ -1,0 +1,1 @@
+本demo演示在surfaceview里，如何通过一个线程操作canvas绘图。
