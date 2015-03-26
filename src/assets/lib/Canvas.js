@@ -22,10 +22,20 @@ var Canvas = (function(){
 	context.fillRect = function(x, y, w, h){	//cite: 8 Drawing rectangles to the canvas
 		inContext.fillRect(x, y, w, h);
 	}
+	context.clearRect = function(x, y, w, h){
+	    inContext.clearRect(x, y, w, h);
+	}
 
-	return {
+	var Canvas =  {
 		getContext: function(type){
 			return context;
 		}
 	}
+	Canvas.__defineGetter__("width", function(){
+        return inContext.getCanvasWidth();
+    });
+    Canvas.__defineGetter__("height", function(){
+        return inContext.getCanvasHeight();
+    });
+	return Canvas;
 })();
