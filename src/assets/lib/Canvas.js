@@ -4,7 +4,7 @@
  * 本接口所有实现参考w3c 2dcontext 文档，http://www.w3.org/TR/2dcontext/
  */
 
-var Canvas = (function(){
+(function(global){
 	var context = {};
 	//属性操作
 	var fillStyle = "#000000";	//cite: 7 Fill and stroke styles
@@ -25,6 +25,9 @@ var Canvas = (function(){
 	context.clearRect = function(x, y, w, h){
 	    inContext.clearRect(x, y, w, h);
 	}
+	context.drawImage = function(img, dx, dy, dw, dh){
+		inContext.drawImage(img, dx, dy, dw, dh);
+	}
 
 	var Canvas =  {
 		getContext: function(type){
@@ -37,5 +40,5 @@ var Canvas = (function(){
     Canvas.__defineGetter__("height", function(){
         return inContext.getCanvasHeight();
     });
-	return Canvas;
-})();
+	global.Canvas = Canvas;
+})(this);
