@@ -31,11 +31,10 @@ require("loader", ["page"], function(page) {
 
 # 目录结构建议
 
-src/org/inception/InScript.java
-
-assets/js/net.js
-assets/js/loader.js
-assets/js/app/page.js
+* src/org/inception/InScript.java
+* assets/js/net.js
+* assets/js/loader.js
+* assets/js/app/page.js
 
 
 # 编码规范
