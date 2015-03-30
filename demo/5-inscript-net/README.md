@@ -14,12 +14,12 @@ _（因为requirejs在安卓下报递归太多的错误，只好自己写了个�
 
 * net.config 提供baseUrl配置，可设定js载入根目录
 * define && require 
-** args[0] 为唯一id，必选；
-** args[1] 如有其他文件依赖填ids数组，如没有可直接填回调方法或对象，必选；
-** args[2] 回调方法，可选；
+	* args[0] 为唯一id，必选；
+	* args[1] 如有其他文件依赖填ids数组，如没有可直接填回调方法或对象，必选；
+	* args[2] 回调方法，可选；
 
 如：
-``javascript
+```javascript
 net.config({
     baseUrl: "app/"
 });
@@ -27,7 +27,7 @@ net.config({
 require("loader", ["page"], function(page) {
     print('modules loaded');
 });
-``
+```
 
 # 目录结构建议
 
@@ -40,7 +40,7 @@ assets/js/app/page.js
 
 # 编码规范
 
-``javascript
+```javascript
 define("base", function() {
     return {
     	alert:function(str){
@@ -72,7 +72,7 @@ define("page", ["data","ui"], function(data, ui) {
 	var str = data.users.join(',');
     ui.show(str);
 });
-``
+```
 
 
 # 本例说明
@@ -82,7 +82,7 @@ define("page", ["data","ui"], function(data, ui) {
 
 
 比如：
-``java
+```java
 DaContext
 public class DaContext{
 	public void change(SurfaceHolder h2){
@@ -93,9 +93,9 @@ public class DaContext{
 DaContext dc = new DaContext();
 inScript.putObject("DaContext", dc);
 inScript.putObject("Holder", holder);
-``
+```
 
-``javascript
+```javascript
 defineClass('com.chajn.jscanvas.DaJSContext');
 
 print(typeof DaContext); object
@@ -104,4 +104,4 @@ DaContext.fillRect(Holder);
 
 var dc = new DaJSContext(Holder);
 dc.fillRect(x, y, w, h);
-``
+```
