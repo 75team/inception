@@ -12,7 +12,9 @@ import com.qiwoo.inception.canvas.util.GLHelper;
 
 import java.util.ArrayList;
 
-
+/**
+ * 每个测试用例都是一个appActivity。它负责初始使inception和inScript
+ */
 public class AppActivity extends Activity {
 
     private GLSurfaceView glSurfaceView;

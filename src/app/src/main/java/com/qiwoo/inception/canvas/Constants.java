@@ -2,6 +2,7 @@ package com.qiwoo.inception.canvas;
 
 /**
  * Created by liupengke on 15/5/19.
+ * Inception使用的常量
  */
 public class Constants {
     public static final int BYTES_PER_FLOAT = 4;

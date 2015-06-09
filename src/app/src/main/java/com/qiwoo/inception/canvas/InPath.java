@@ -17,6 +17,7 @@ import static android.opengl.GLES20.glUseProgram;
 
 /**
  * Created by liupengke on 15/5/21.
+ * 实现canvas中所有与路径相关命令的处理
  */
 public class InPath {
     private ArrayList lineList = new ArrayList();

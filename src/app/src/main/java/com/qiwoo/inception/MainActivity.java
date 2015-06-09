@@ -18,14 +18,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * 主程序界面，以列表的形示展示所有测试用例。
+ * 点击即可在新activity中打开测试用例，并调用测试用例的index.js入口文件开始执行
+ */
 public class MainActivity extends ListActivity {
     private ListView listView = null;
     JSONArray appList = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //加载测试用例配置文件
         String str = FileHelper.loadFromAssetsFile(this, "app/Conf.json");
         try{
             JSONObject appConf = new JSONObject(str);

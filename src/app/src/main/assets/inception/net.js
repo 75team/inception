@@ -1,3 +1,6 @@
+/**
+ * 通过调用InScript注入到js环境的load方法, 加载js文件。此实现遵照amd协议
+ */
 var net = (function() {
 	var cache = {};
 	var options = {

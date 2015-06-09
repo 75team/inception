@@ -26,6 +26,7 @@ import static android.opengl.Matrix.orthoM;
 
 /**
  * Created by liupengke on 15/5/19.
+ * Inception的主程序，它负责消费js传过来的绘图命令，并交给相应的绘图模块处理
  */
 public class InRender implements GLSurfaceView.Renderer {
     private ArrayList cmdList;
@@ -48,7 +49,7 @@ public class InRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        //texRect = new Triangle(context);
+        //编译全局的顶点和片断着色器，它可以被所有的绘图命令使用
         String vertexShaderS = FileHelper.loadFromAssetsFile(context, "inception/glsl/vertex_shader.glsl");
         String fragShaderS = FileHelper.loadFromAssetsFile(context, "inception/glsl/fragment_shader.glsl");
         mProgram = ShaderHelper.createProgram(vertexShaderS, fragShaderS);
@@ -67,9 +68,10 @@ public class InRender implements GLSurfaceView.Renderer {
         viewWidth = width;
         viewHeight = height;
 
+        //正交投影短阵设定，它实现了下面两个功能
+        // 1、保证我们程序中使用的坐标系元点(0,0)在左上角，跟浏览器一致，而不是opengl中统一坐标系的屏幕中心点
+        // 2、保证我们操作的高宽是屏幕高宽，而不是统一坐标系的-1到1
         ratio = (float) width/height;
-        //MatrixState.setProjectOrtho(-ratio, ratio, -1f, 1f, -1f, 1f);
-        //MatrixState.setProjectOrtho(0, width, height, 0f, -1f, 1f);
         final float aspectRatio = width > height ?
                 (float) width / (float) height :
                 (float) height / (float) width;
@@ -87,11 +89,14 @@ public class InRender implements GLSurfaceView.Renderer {
         // Clear the rendering surface.
         //清除深度缓冲与颜色缓冲
         GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+        //screenBuffer的作用很重要，它把上一帧的内容存储下来，并在绘制新一帧前重绘到屏幕上
+        //以期达到“canvas中，不主动clear屏幕，内容一致存在”的效果
         screenBuffer.openBuffer();
         screenBuffer.drawPreviousFrame();
 
 
         synchronized (cmdList) {
+            //命令分发消费中心，把绘图命令交给相应模块处理
             if(cmdList.size() > 0) {
                 while (cmdList.size() > 0) {
                     ArrayList cmdItem = (ArrayList) cmdList.remove(0);

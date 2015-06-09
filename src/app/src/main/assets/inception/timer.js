@@ -1,3 +1,7 @@
+/**
+ * 实现浏览器下的setTimeout和setInterval方法，及对应的clearTimeout和clearInterval方法。
+ */
+
 (function(global){
     var $guid = 0;
     function guid(){

@@ -9,6 +9,7 @@ import android.os.Build;
  * Created by liupengke on 15/5/19.
  */
 public class GLHelper {
+    //检查当前设备是不是支持opengles2.0
     public final static boolean checkSupportsEs2(Context context){
         // Check if the system supports OpenGL ES 2.0.
         final ActivityManager activityManager =

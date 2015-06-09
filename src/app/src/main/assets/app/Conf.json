@@ -1,15 +1,26 @@
+/**
+ * 程序主界面列表的配置文件，所有测试用例，需要在这里配置，以便于出现在首屏列表中，并调起验证效果
+ */
 {
-    "list": [
-            {
-                "title": "fillRect",
-                "app": "fillrect",
-                "description": "fileRect做的一个动画"
-            },
-            {
-                "title": "path - lineTo",
-                "app": "lineto",
-                "description": "实验path 的 lineTo方法"
-            }
-        ]
+  "list": [
+    {
+      //测试用例的唯一标识符。请保证assets/app目录下有以它命名的文件夹，
+      //并且在测文件夹下有js文件夹，js文件夹下有index.js文件，它是测试
+      //用例的入口程序
+      "app": "fillrect",
+      //在首屏列表中显示的测试用例的名字
+      "title": "fillRect",
+      //在首屏列表中显示的测试用例的详细描述
+      "description": "fileRect做的一个动画",
+      //测试用例app的背景颜色，默认值是白色
+      "background": "#ffffff"
+
+    },
+    {
+      "title": "path - lineTo",
+      "app": "lineto",
+      "description": "实验path 的 lineTo方法"
+    }
+  ]
 }
 

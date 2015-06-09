@@ -4,6 +4,7 @@ import android.opengl.Matrix;
 
 /**
  * Created by liupengke on 15/5/19.
+ * 负责数组操作的简化
  */
 public class MatrixState {
     private static float[] mProjMatrix = new float[16];//4x4矩阵 投影用

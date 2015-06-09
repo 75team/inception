@@ -10,6 +10,7 @@ import static android.opengl.GLES20.glVertexAttribPointer;
 import static com.qiwoo.inception.canvas.Constants.BYTES_PER_FLOAT;
 /**
  * Created by liupengke on 15/5/19.
+ * 顶点(包括颜色)的内容分配处理
  */
 public class VertexArray {
     private final FloatBuffer floatBuffer;

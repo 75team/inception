@@ -11,6 +11,7 @@ import static android.opengl.GLES20.glViewport;
 
 /**
  * Created by liupengke on 15/5/19.
+ * 保存一上帧内容，以期在下一帧渲染时，不会把整个canvas清空
  */
 public class ScreenBuffer {
     private int fbo_mProgram, fbo_maPositionHandle, fbo_maTexCoorHandle, fbo_muMatrixHandle;

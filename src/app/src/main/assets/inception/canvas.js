@@ -1,9 +1,18 @@
+/**
+ * Canvas对象，js环境全局对象，提供所有canvas方法和属性。
+ */
 (function(global){
+
 	//属性操作
     var fillStyle = "#000000";	//cite: 7 Fill and stroke styles
 
+    /**
+     * context对象，提供绘图的所有接口
+     */
     var context = {};
-
+    /**
+     * 在形状内部填充的颜色或模式
+     */
     context.__defineGetter__("fillStyle", function(){
         return fillStyle;
     });
@@ -14,6 +23,9 @@
         inContext.setFillStyle(rgba.a, rgba.r, rgba.g, rgba.b);
     });
 
+    /**
+     * 开始绘制路径，清空之前路径设定
+     */
     context.beginPath = function(){
         $CmdCollector.addCmd('beginPath');
     }

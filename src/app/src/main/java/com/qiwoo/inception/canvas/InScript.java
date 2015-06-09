@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by liupengke on 15/5/19.
+ * InScript调用rhino，联接js与java环境，并向js环境注入一些全局变量和方法，以实现两个环境的通讯
  */
 public class InScript extends ScriptableObject implements Runnable {
 

@@ -5,6 +5,7 @@ import android.util.Log;
 
 /**
  * Created by liupengke on 15/5/19.
+ * 加载、编译着色器
  */
 public class ShaderHelper {
     //加载制定shader的方法

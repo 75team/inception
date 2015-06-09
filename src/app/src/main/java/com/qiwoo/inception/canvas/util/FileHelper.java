@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 
 /**
  * Created by liupengke on 15/5/19.
+ * 从assets或res中读取文件，并返回文件内容
  */
 public class FileHelper {
     public static String loadFromAssetsFile(Context context, String fname){
