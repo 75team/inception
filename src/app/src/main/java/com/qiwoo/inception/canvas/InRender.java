@@ -8,6 +8,7 @@ import android.util.Log;
 import com.qiwoo.inception.canvas.util.FileHelper;
 import com.qiwoo.inception.canvas.util.ShaderHelper;
 import com.qiwoo.inception.canvas.util.VertexArray;
+import com.qiwoo.inception.canvas.state.State;
 
 import org.mozilla.javascript.Scriptable;
 
@@ -108,6 +109,9 @@ public class InRender implements GLSurfaceView.Renderer {
                             params = (Scriptable) cmdItem.get(1);
                             fillRect(params);
                             break;
+                        case "beginPath":
+                            path.beginPath();
+                            break;
                         case "moveTo":
                             params = (Scriptable) cmdItem.get(1);
                             path.moveTo(params);
@@ -118,6 +122,16 @@ public class InRender implements GLSurfaceView.Renderer {
                             break;
                         case "stroke":
                             path.stroke();
+                            break;
+                        case "save":
+                            State.save();
+                            break;
+                        case "restore":
+                            State.restore();
+                            break;
+                        case "setStrokeStyle":
+                            params = (Scriptable) cmdItem.get(1);
+                            State.setStrokeStyle(params);
                             break;
                         default:
                             Log.i("error", cmdName + " is not valid");

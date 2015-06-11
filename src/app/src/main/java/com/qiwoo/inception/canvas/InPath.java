@@ -1,7 +1,10 @@
 package com.qiwoo.inception.canvas;
 
+import android.graphics.Color;
 import android.util.Log;
 
+import com.qiwoo.inception.canvas.state.State;
+import com.qiwoo.inception.canvas.state.Style;
 import com.qiwoo.inception.canvas.util.VertexArray;
 
 import org.mozilla.javascript.Scriptable;
@@ -29,6 +32,9 @@ public class InPath {
         this.maColorHandle = maColorHandle;
         this.muMatrixHandle = muMatrixHandle;
     }
+    public void beginPath(){
+        lineList.clear();
+    }
     public void lineTo(Scriptable params){
         float x = ((Number)params.get(0, params)).floatValue();
         float y = ((Number)params.get(1, params)).floatValue();
@@ -54,41 +60,39 @@ public class InPath {
     public void stroke(){
         float[] rectVertices = new float[lineList.size()*4];
         float[] colorVertices = new float[lineList.size()*6];
-        float[] strokeStyle = InState.getStrokeStyle();
-        float r = strokeStyle[0];
-        float g = strokeStyle[1];
-        float b = strokeStyle[2];
-        Iterator it = lineList.iterator();
-        int i=0;
-        while(it.hasNext()){
-            float[] line = (float[])it.next();
-            rectVertices[4*i] = line[0];
-            rectVertices[4*i+1] = line[1];
-            rectVertices[4*i+2] = line[2];
-            rectVertices[4*i+3] = line[3];
+        Style strokeStyle = State.curState.m_strokeStyle;
+        if(strokeStyle.type == Style.Color) {
+            float r = Color.red(strokeStyle.color);
+            float g = Color.green(strokeStyle.color);
+            float b = Color.blue(strokeStyle.color);
+            Iterator it = lineList.iterator();
+            int i = 0;
+            while (it.hasNext()) {
+                float[] line = (float[]) it.next();
+                rectVertices[4 * i] = line[0];
+                rectVertices[4 * i + 1] = line[1];
+                rectVertices[4 * i + 2] = line[2];
+                rectVertices[4 * i + 3] = line[3];
 
-            colorVertices[6*i] = r;
-            colorVertices[6*i+1] = g;
-            colorVertices[6*i+2] = b;
-            colorVertices[6*i+3] = r;
-            colorVertices[6*i+4] = g;
-            colorVertices[6*i+5] = b;
-            i++;
+                colorVertices[6 * i] = r;
+                colorVertices[6 * i + 1] = g;
+                colorVertices[6 * i + 2] = b;
+                colorVertices[6 * i + 3] = r;
+                colorVertices[6 * i + 4] = g;
+                colorVertices[6 * i + 5] = b;
+                i++;
+            }
+
+            VertexArray vaVertex = new VertexArray(rectVertices);
+
+            VertexArray vaColor = new VertexArray(colorVertices);
+
+
+            glUseProgram(mProgram);
+            vaVertex.setVertexAttribPointer(maPositionHandle, 2, 2 * 4);
+            vaColor.setVertexAttribPointer(maColorHandle, 3, 3 * 4);
+            glUniformMatrix4fv(muMatrixHandle, 1, false, Constants.getProjectionMatrix(), 0);
+            glDrawArrays(GL_LINES, 0, lineList.size() * 2);
         }
-        Log.i("test", Arrays.toString(rectVertices));
-
-        VertexArray vaVertex = new VertexArray(rectVertices);
-        //Log.i("test", Arrays.toString(rectVertices));
-
-        VertexArray vaColor = new VertexArray(colorVertices);
-
-
-
-
-        glUseProgram(mProgram);
-        vaVertex.setVertexAttribPointer(maPositionHandle,2,2*4);
-        vaColor.setVertexAttribPointer(maColorHandle,3,3*4);
-        glUniformMatrix4fv(muMatrixHandle, 1, false, Constants.getProjectionMatrix(), 0);
-        glDrawArrays(GL_LINES,0,lineList.size()*2);
     }
 }

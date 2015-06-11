@@ -23,6 +23,21 @@
         inContext.setFillStyle(rgba.a, rgba.r, rgba.g, rgba.b);
     });
 
+    //线条颜色
+    context.__defineGetter__("strokeStyle", function(){
+        return fillStyle;
+    });
+    context.__defineSetter__("strokeStyle", function(val){
+        $CmdCollector.addCmd('setStrokeStyle', [val]);
+    });
+
+    //state处理
+    context.save = function(){
+        $CmdCollector.addCmd('save');
+    }
+    context.restore = function(){
+        $CmdCollector.addCmd('restore');
+    }
     /**
      * 开始绘制路径，清空之前路径设定
      */

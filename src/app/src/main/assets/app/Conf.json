@@ -20,6 +20,16 @@
       "title": "path - lineTo",
       "app": "lineto",
       "description": "实验path 的 lineTo方法"
+    },
+    {
+      "title": "state - strokeStyle",
+      "app": "strokestyle",
+      "description": "实验状态中线条样式的设置"
+    },
+    {
+      "title": "state - save&restore",
+      "app": "statesave",
+      "description": "保存状态到栈，以及还原状态"
     }
   ]
 }
