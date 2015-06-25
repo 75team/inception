@@ -9,4 +9,8 @@ require("index", function() {
     setTimeout(function(){
         context.fillRect(200,200,300, 300);
     }, 1000);
+
+    $in.callRPC("canvas.RPCTest.Test", function(){
+        print('aaaaaaaaaaaa');
+    });
 });

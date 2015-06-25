@@ -19,6 +19,7 @@ public class AppActivity extends Activity {
 
     private GLSurfaceView glSurfaceView;
     boolean isGlSet = false;
+    public  InScript inScript;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,10 +39,12 @@ public class AppActivity extends Activity {
 
 
             CmdCollector cc = new CmdCollector(cmdList);
-            InScript inScript = new InScript(appName);
+
+            inScript = new InScript(appName);
             inScript.putObject("$CmdCollector", cc);
             Thread t = new Thread(inScript);
             t.start();
+            //inScript.run();
         }
         setContentView(glSurfaceView);
     }

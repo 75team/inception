@@ -2,6 +2,8 @@ package com.qiwoo.inception.canvas;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -142,9 +145,64 @@ public class InScript extends ScriptableObject implements Runnable {
 //			is = new FileInputStream(path);
         return is;
     }
+    public void evalString(String code){
+        try {
+            Context cx = Context.enter();
+            cx.setOptimizationLevel(-1);
+            cx.evaluateString(globalScope, code, "eval", 1, null);
+        }finally {
+            Context.exit();
+        }
+    }
+
+    public class RPCDelegator{
+        private InScript inScript;
+        public RPCDelegator(InScript inScript){
+            this.inScript = inScript;
+        }
+        public void send(String data){
+            try {
+                JSONObject obj = new JSONObject(data);
+                String id = obj.getString("id");
+                String methodString = obj.getString("method");
+                JSONObject params = obj.getJSONObject("params");
+                String[] parts = methodString.split("\\.");
+                StringBuffer tmp = new StringBuffer();
+                tmp.append("com.qiwoo.inception");
+                for(int i = 0; i < parts.length - 1; i++){
+                    tmp.append("." + parts[i]);
+                }
+                String className = tmp.toString();
+                String methodName = parts[parts.length - 1];
+                Class RPCDelegate = Class.forName(className);
+                Class[] parameterTypes = new Class[2];
+                parameterTypes[0] = JSONObject.class;
+                parameterTypes[1] = RPCCallbackHelper.class;
+                Method method = RPCDelegate.getMethod(methodName, parameterTypes);
+
+                Object[] args = {params, new RPCCallbackHelper(id, inScript)};
+                method.invoke(RPCDelegate, args);
+            }catch (JSONException e){
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     @Override
     public void run() {
         try {
+            RPCDelegator dd = new RPCDelegator(this);
+            putObject("$inRPCDelegator", dd);
+
             Context cx = Context.enter();
             cx.setOptimizationLevel(-1);
             support = new InScript();
@@ -167,14 +225,13 @@ public class InScript extends ScriptableObject implements Runnable {
                     ScriptableObject.DONTENUM);
 
             String incepFoler = "/assets/inception/";
-            String[] jsFiles = {incepFoler+"timer.js", incepFoler+"net.js", incepFoler+"canvas.js", "index.js" };//"r.js","loader.js"
+            String[] jsFiles = {incepFoler+"base.js", incepFoler+"timer.js", incepFoler+"net.js", incepFoler+"canvas.js", "index.js" };//"r.js","loader.js"
 //			FunctionObject f = (FunctionObject) globalScope.get("emptyFunc", globalScope);
 //			InScript.load(cx, globalScope, jsFiles, f);
+
             ScriptableObject.callMethod(globalScope, "load", jsFiles);
         } finally {
             Context.exit();
         }
     }
-
-
 }

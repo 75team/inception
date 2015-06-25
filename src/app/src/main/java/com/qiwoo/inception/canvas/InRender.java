@@ -5,6 +5,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
+import com.qiwoo.inception.AppActivity;
 import com.qiwoo.inception.canvas.util.FileHelper;
 import com.qiwoo.inception.canvas.util.ShaderHelper;
 import com.qiwoo.inception.canvas.util.VertexArray;
@@ -162,9 +163,9 @@ public class InRender implements GLSurfaceView.Renderer {
 
 
         glUseProgram(mProgram);
-        vaVertex.setVertexAttribPointer(maPositionHandle,2,2*4);
-        vaColor.setVertexAttribPointer(maColorHandle,3,3*4);
+        vaVertex.setVertexAttribPointer(maPositionHandle, 2, 2 * 4);
+        vaColor.setVertexAttribPointer(maColorHandle, 3, 3 * 4);
         glUniformMatrix4fv(muMatrixHandle, 1, false, Constants.getProjectionMatrix(), 0);
-        glDrawArrays(GL_TRIANGLES,0,6);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 }
