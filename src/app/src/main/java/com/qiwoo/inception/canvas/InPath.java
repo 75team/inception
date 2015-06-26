@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import static android.opengl.GLES20.GL_LINES;
 import static android.opengl.GLES20.glDrawArrays;
+import static android.opengl.GLES20.glLineWidth;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 
@@ -65,6 +66,8 @@ public class InPath {
             float r = Color.red(strokeStyle.color);
             float g = Color.green(strokeStyle.color);
             float b = Color.blue(strokeStyle.color);
+            glLineWidth(State.curState.m_lineWidth);
+
             Iterator it = lineList.iterator();
             int i = 0;
             while (it.hasNext()) {

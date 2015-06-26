@@ -1,6 +1,7 @@
 package com.qiwoo.inception.canvas.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -62,5 +63,16 @@ public class FileHelper {
         }
 
         return body.toString();
+    }
+    public static InputStream readFromAsserts(Context context, String fname) {
+        InputStream is = null;
+
+        try {
+            is = context.getAssets().open(fname);
+        } catch (Exception e) {
+            System.out.println(e);
+            Log.i("debug", e.toString());
+        }
+        return is;
     }
 }

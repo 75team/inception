@@ -2,6 +2,8 @@ package com.qiwoo.inception.canvas;
 
 import android.util.Log;
 
+import com.qiwoo.inception.base.Image;
+
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
@@ -154,6 +156,12 @@ public class InScript extends ScriptableObject implements Runnable {
             globalScope.defineFunctionProperties(names, globalScope.getClass(),
                     ScriptableObject.DONTENUM);
 
+            try {
+                ScriptableObject.defineClass(globalScope, Image.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             Iterator it = objectMap.keySet().iterator();
             while(it.hasNext()){
                 String name = (String) it.next();
@@ -167,7 +175,7 @@ public class InScript extends ScriptableObject implements Runnable {
                     ScriptableObject.DONTENUM);
 
             String incepFoler = "/assets/inception/";
-            String[] jsFiles = {incepFoler+"timer.js", incepFoler+"net.js", incepFoler+"canvas.js", "index.js" };//"r.js","loader.js"
+            String[] jsFiles = {incepFoler+"timer.js", incepFoler+"net.js", incepFoler+"Color.js", incepFoler+"canvas.js", "index.js" };//"r.js","loader.js"
 //			FunctionObject f = (FunctionObject) globalScope.get("emptyFunc", globalScope);
 //			InScript.load(cx, globalScope, jsFiles, f);
             ScriptableObject.callMethod(globalScope, "load", jsFiles);

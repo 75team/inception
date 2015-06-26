@@ -30,6 +30,16 @@
       "title": "state - save&restore",
       "app": "statesave",
       "description": "保存状态到栈，以及还原状态"
+    },
+    {
+      "title": "drawimg",
+      "app": "drawimg",
+      "description": "实现纹理绘图"
+    },
+    {
+      "title": "path - arc",
+      "app": "arc",
+      "description": "绘制弧"
     }
   ]
 }

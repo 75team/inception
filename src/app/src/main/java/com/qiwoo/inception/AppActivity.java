@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
+import com.qiwoo.inception.base.Image;
 import com.qiwoo.inception.canvas.CmdCollector;
 import com.qiwoo.inception.canvas.InRender;
 import com.qiwoo.inception.canvas.InScript;
@@ -39,6 +40,7 @@ public class AppActivity extends Activity {
 
             CmdCollector cc = new CmdCollector(cmdList);
             InScript inScript = new InScript(appName);
+            Image.setContext(this);
             inScript.putObject("$CmdCollector", cc);
             Thread t = new Thread(inScript);
             t.start();

@@ -17,7 +17,7 @@
         return fillStyle;
     });
     context.__defineSetter__("fillStyle", function(val){
-        var color = new InColor(val);
+        var color = new Color(val);
         var rgba = color.getRGBA();
         fillStyle = color.toString();
         inContext.setFillStyle(rgba.a, rgba.r, rgba.g, rgba.b);
@@ -29,6 +29,13 @@
     });
     context.__defineSetter__("strokeStyle", function(val){
         $CmdCollector.addCmd('setStrokeStyle', [val]);
+    });
+    //线条颜色
+    context.__defineGetter__("lineWidth", function(){
+        return fillStyle;
+    });
+    context.__defineSetter__("lineWidth", function(val){
+        $CmdCollector.addCmd('setLineWidth', [val]);
     });
 
     //state处理
@@ -56,9 +63,20 @@
     context.lineTo = function(x, y){
         $CmdCollector.addCmd('lineTo', [x, y]);
     }
+    context.arc = function(x, y, radius, startAngle, endAngle, anticlockwise){
+        if(!radius || radius<=0) return;
+        anticlockwise = anticlockwise|| false;
+        $CmdCollector.addCmd('arc',[x, y, radius, startAngle, endAngle, anticlockwise]);
+    }
 
     context.fillRect = function(x, y, w, h){
         $CmdCollector.addCmd('fillRect',[x,y,w,h]);
+    }
+    context.drawImage = function(img, x, y, w, h) {
+        $CmdCollector.addCmd('drawImage', [img, x, y, w, h]);
+    }
+    context.clearRect = function(x, y, w, h) {
+         $CmdCollector.addCmd('clearRect',[x,y,w,h]);
     }
     var Canvas =  {
         getContext: function(type){
@@ -66,10 +84,10 @@
         }
     }
     Canvas.__defineGetter__("width", function(){
-        return inContext.getCanvasWidth();
+        return 640;
     });
     Canvas.__defineGetter__("height", function(){
-        return inContext.getCanvasHeight();
+        return 960;
     });
 	global.Canvas = Canvas;
 })(this);

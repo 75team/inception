@@ -32,4 +32,9 @@ public class VertexArray {
 
         floatBuffer.position(0);
     }
+
+    public void setVertexAttribPointer(int dataOffset, int attributeLocation, int componentCount, int stride) {
+        floatBuffer.position(dataOffset);
+        glVertexAttribPointer(attributeLocation, componentCount, GL_FLOAT, false, stride, floatBuffer);
+    }
 }
