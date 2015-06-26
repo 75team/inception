@@ -1,4 +1,4 @@
 ._*
 .DS*
 .idea
-app
+src/app/build
