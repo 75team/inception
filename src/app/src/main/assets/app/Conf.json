@@ -40,6 +40,11 @@
       "title": "path - arc",
       "app": "arc",
       "description": "绘制弧"
+    },
+    {
+      "title": "path - bezier",
+      "app": "bezier",
+      "description": "绘制贝塞尔曲线"
     }
   ]
 }

@@ -68,6 +68,14 @@
         anticlockwise = anticlockwise|| false;
         $CmdCollector.addCmd('arc',[x, y, radius, startAngle, endAngle, anticlockwise]);
     }
+    context.quadraticCurveTo = function(cpx, cpy, x, y){
+        //ensure is number,todo
+        $CmdCollector.addCmd('quadraticCurveTo',[cpx, cpy, x, y]);
+    }
+    context.bezierCurveTo = function(cp1x, cp1y, cp2x, cp2y, x, y){
+        //ensure is number, todo
+        $CmdCollector.addCmd('bezierCurveTo',[cp1x, cp1y, cp2x, cp2y, x, y]);
+    }
 
     context.fillRect = function(x, y, w, h){
         $CmdCollector.addCmd('fillRect',[x,y,w,h]);

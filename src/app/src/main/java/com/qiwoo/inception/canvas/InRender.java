@@ -155,6 +155,14 @@ public class InRender implements GLSurfaceView.Renderer {
                             params = (Scriptable) cmdItem.get(1);
                             Path.arc(params);
                             break;
+                        case "quadraticCurveTo":
+                            params = (Scriptable) cmdItem.get(1);
+                            Path.quadraticCurveTo(params);
+                            break;
+                        case "bezierCurveTo":
+                            params = (Scriptable) cmdItem.get(1);
+                            Path.bezierCurveTo(params);
+                            break;
                         case "clearRect":
                             params = (Scriptable) cmdItem.get(1);
                             clearRect(params);

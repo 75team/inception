@@ -4,16 +4,14 @@ net.config({
 require("index",function() {
     var context = Canvas.getContext('2d');
 
-    var centerX = 200;
-    var centerY = 200;
-    var radius = 100;
-
-    context.lineWidth = 10;
+    context.lineWidth = 3;
     context.beginPath();
-    context.arc(centerX, centerY, radius, 0, 1 * Math.PI, false);
+    context.arc(100, 100, 100, 0.5*Math.PI, Math.PI, false);
+    context.stroke();
+
+    context.arc(150, 150, 50, 0.5*Math.PI, 1.75*Math.PI, true);
     setTimeout(function(){
-        context.arc(300, 300, 500, 0, 1 * Math.PI, false);
+        context.arc(200, 200, 300, 1.75*Math.PI, 0.5*Math.PI, false);
+        context.stroke();
     }, 2000);
-    //context.strokeStyle = '#003300';
-    //context.stroke();
 });
