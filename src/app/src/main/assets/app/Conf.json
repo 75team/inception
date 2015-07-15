@@ -45,6 +45,11 @@
       "title": "path - bezier",
       "app": "bezier",
       "description": "绘制贝塞尔曲线"
+    },
+    {
+      "title": "text - font filltext stroketext",
+      "app": "filltext",
+      "description": "文字相关绘制，设置字号字体颜色，衬字等相关操作"
     }
   ]
 }

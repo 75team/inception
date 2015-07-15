@@ -9,13 +9,14 @@ import android.opengl.GLUtils;
 import android.util.Log;
 
 import com.qiwoo.inception.base.Image;
+import com.qiwoo.inception.base.Text;
 import com.qiwoo.inception.canvas.path.Path;
+import com.qiwoo.inception.canvas.state.State;
 import com.qiwoo.inception.canvas.util.FileHelper;
 import com.qiwoo.inception.canvas.util.ShaderHelper;
 import com.qiwoo.inception.canvas.util.TextureHelper;
 import com.qiwoo.inception.canvas.util.TextureShaderProgram;
 import com.qiwoo.inception.canvas.util.VertexArray;
-import com.qiwoo.inception.canvas.state.State;
 
 import org.mozilla.javascript.Scriptable;
 
@@ -25,6 +26,9 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static android.opengl.GLES20.GL_BLEND;
+import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
+import static android.opengl.GLES20.GL_SRC_ALPHA;
 import static android.opengl.GLES20.GL_TRIANGLES;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
@@ -32,9 +36,6 @@ import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.Matrix.orthoM;
-import static android.opengl.GLES20.GL_BLEND;
-import static android.opengl.GLES20.GL_SRC_ALPHA;
-import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
 
 /**
  * Created by liupengke on 15/5/19.
@@ -57,6 +58,8 @@ public class InRender implements GLSurfaceView.Renderer {
     public InRender( Context context, ArrayList cmdList){
         this.context = context;
         this.cmdList = cmdList;
+        //设置全局State中的fontScale，字体缩放比例
+        State.setFontScale(this.context.getResources().getDisplayMetrics().scaledDensity);
     }
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
@@ -143,6 +146,10 @@ public class InRender implements GLSurfaceView.Renderer {
                         case "restore":
                             State.restore();
                             break;
+                        case "setFont":
+                            params = (Scriptable) cmdItem.get(1);
+                            State.setFont(params);
+                            break;
                         case "setStrokeStyle":
                             params = (Scriptable) cmdItem.get(1);
                             State.setStrokeStyle(params);
@@ -150,6 +157,10 @@ public class InRender implements GLSurfaceView.Renderer {
                         case "setLineWidth":
                             params = (Scriptable) cmdItem.get(1);
                             State.setLineWidth(params);
+                            break;
+                        case "setFillStyle":
+                            params = (Scriptable) cmdItem.get(1);
+                            State.setFillStyle(params);
                             break;
                         case "arc":
                             params = (Scriptable) cmdItem.get(1);
@@ -170,6 +181,16 @@ public class InRender implements GLSurfaceView.Renderer {
                         case "drawImage":
                             params = (Scriptable) cmdItem.get(1);
                             drawImage(params);
+                            break;
+                        case "fillText":
+                            params = (Scriptable) cmdItem.get(1);
+                            Text text = new Text(textureProgram);
+                            text.fillText(params);
+                            break;
+                        case "strokeText":
+                            params = (Scriptable) cmdItem.get(1);
+                            Text textStroke = new Text(textureProgram);
+                            textStroke.strokeText(params);
                             break;
                         default:
                             Log.i("error", cmdName + " is not valid");
@@ -214,7 +235,7 @@ public class InRender implements GLSurfaceView.Renderer {
 
 
         glUseProgram(mProgram);
-        vaVertex.setVertexAttribPointer(maPositionHandle,2,2*4);
+        vaVertex.setVertexAttribPointer(maPositionHandle, 2, 2 * 4);
         vaColor.setVertexAttribPointer(maColorHandle, 3, 3 * 4);
         glUniformMatrix4fv(muMatrixHandle, 1, false, Constants.getProjectionMatrix(), 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);

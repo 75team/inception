@@ -11,16 +11,25 @@
      */
     var context = {};
     /**
+     * font设置
+     */
+    context.__defineSetter__("font", function(val){
+        $CmdCollector.addCmd('setFont', [val]);
+    });
+    /**
      * 在形状内部填充的颜色或模式
      */
     context.__defineGetter__("fillStyle", function(){
         return fillStyle;
     });
+//    context.__defineSetter__("fillStyle", function(val){
+//        var color = new Color(val);
+//        var rgba = color.getRGBA();
+//        fillStyle = color.toString();
+//        inContext.setFillStyle(rgba.a, rgba.r, rgba.g, rgba.b);
+//    });
     context.__defineSetter__("fillStyle", function(val){
-        var color = new Color(val);
-        var rgba = color.getRGBA();
-        fillStyle = color.toString();
-        inContext.setFillStyle(rgba.a, rgba.r, rgba.g, rgba.b);
+        $CmdCollector.addCmd('setFillStyle', [val]);
     });
 
     //线条颜色
@@ -30,7 +39,7 @@
     context.__defineSetter__("strokeStyle", function(val){
         $CmdCollector.addCmd('setStrokeStyle', [val]);
     });
-    //线条颜色
+    //线条宽度
     context.__defineGetter__("lineWidth", function(){
         return fillStyle;
     });
@@ -76,10 +85,23 @@
         //ensure is number, todo
         $CmdCollector.addCmd('bezierCurveTo',[cp1x, cp1y, cp2x, cp2y, x, y]);
     }
-
     context.fillRect = function(x, y, w, h){
         $CmdCollector.addCmd('fillRect',[x,y,w,h]);
     }
+    context.fillText = function(text, x, y, maxWidth){
+        if(maxWidth){
+            $CmdCollector.addCmd('fillText', [text, x, y, maxWidth]);
+        }else{
+            $CmdCollector.addCmd('fillText', [text, x, y]);
+        }
+    }
+    context.strokeText = function(text, x, y, maxWidth){
+            if(maxWidth){
+                $CmdCollector.addCmd('strokeText', [text, x, y, maxWidth]);
+            }else{
+                $CmdCollector.addCmd('strokeText', [text, x, y]);
+            }
+        }
     context.drawImage = function(img, x, y, w, h) {
         $CmdCollector.addCmd('drawImage', [img, x, y, w, h]);
     }

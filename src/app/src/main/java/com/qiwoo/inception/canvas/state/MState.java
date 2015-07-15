@@ -1,14 +1,22 @@
 package com.qiwoo.inception.canvas.state;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 
 /**
  * Created by liupengke on 15/6/11.
  */
 public class MState {
+    //px=>sp转换使用的系数，大多数情况下是1.5
+    float m_fontScale = 1.5f;
+
     public Style m_strokeStyle = new Style();
     public Style m_fillStyle = new Style();
     public float m_lineWidth = 1;
+    //默认14sp
+    public int m_fontSize = 14;
+    //默认字体
+    public Typeface m_typeFace = Typeface.DEFAULT;
     //m_lineCap
     //m_lineJoin
     //float m_miterLimit = 10.0;
