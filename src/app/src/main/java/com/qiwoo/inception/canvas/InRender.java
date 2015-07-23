@@ -68,13 +68,13 @@ public class InRender implements GLSurfaceView.Renderer {
         String vertexShaderS = FileHelper.loadFromAssetsFile(context, "inception/glsl/vertex_shader.glsl");
         String fragShaderS = FileHelper.loadFromAssetsFile(context, "inception/glsl/fragment_shader.glsl");
         mProgram = ShaderHelper.createProgram(vertexShaderS, fragShaderS);
-        textureProgram = new TextureShaderProgram(context); // 编译出纹理着色器程序
         maPositionHandle = GLES20.glGetAttribLocation(mProgram, "a_Position");
         //获取程序中顶点颜色属性引用id
         maColorHandle= GLES20.glGetAttribLocation(mProgram, "a_Color");
         //获取程序中总变换矩阵引用id
         muMatrixHandle = GLES20.glGetUniformLocation(mProgram, "u_Matrix");
 
+        DrawImage.init(this.context); // 初始化纹理绘制
         GLES20.glEnable(GL_BLEND); // 开启混色模式
         GLES20.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // 如果源色 alpha 为0，则取目标色，如果源色alpha为1，则取源色，否则视源色的alpha大小各取一部分。源色的alpha越大，则源色取的越多，最终结果源色的表现更强；源色的alpha越小，则目标色“透过”的越多。
         Image.setContext(this.context); // 绑定Image的Context，便于获取文件流
@@ -180,7 +180,7 @@ public class InRender implements GLSurfaceView.Renderer {
                             break;
                         case "drawImage":
                             params = (Scriptable) cmdItem.get(1);
-                            drawImage(params);
+                            DrawImage.drawImage(params);
                             break;
                         case "fillText":
                             params = (Scriptable) cmdItem.get(1);
@@ -231,9 +231,6 @@ public class InRender implements GLSurfaceView.Renderer {
                 0,0,0
         });
 
-
-
-
         glUseProgram(mProgram);
         vaVertex.setVertexAttribPointer(maPositionHandle, 2, 2 * 4);
         vaColor.setVertexAttribPointer(maColorHandle, 3, 3 * 4);
@@ -257,7 +254,6 @@ public class InRender implements GLSurfaceView.Renderer {
         };
 
         VertexArray vaVertex = new VertexArray(rectVertices);
-        //Log.i("test", Arrays.toString(rectVertices));
 
         VertexArray vaColor = new VertexArray(new float[]{
                 1f, 1f, 1f,
@@ -267,106 +263,10 @@ public class InRender implements GLSurfaceView.Renderer {
                 1f, 1f, 1f,
                 1f, 1f, 1f,
         });
-
-
         glUseProgram(mProgram);
         vaVertex.setVertexAttribPointer(maPositionHandle, 2, 2 * 4);
         vaColor.setVertexAttribPointer(maColorHandle, 3, 0);
-
-//        glUniform4f(maColorHandle, 0f, 0f, 0f, 1f);
         glUniformMatrix4fv(muMatrixHandle, 1, false, Constants.getProjectionMatrix(), 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-    }
-
-    public void drawImage(Scriptable params) {
-        Image img = (Image)params.get(0, params);
-        int dx = ((Number) params.get(1, params)).intValue();
-        int dy = ((Number) params.get(2, params)).intValue();
-        int dw = ((Number) params.get(3, params)).intValue();
-        int dh = ((Number) params.get(4, params)).intValue();
-        drawImage(img, dx, dy, dw, dh);
-    }
-    private int[] loadTexture(String path) {
-        int[] textureId = new int[1];
-        int[] result = null;
-
-        // 创建纹理对象
-        GLES20.glGenTextures(1, textureId, 0);
-
-        if (0 != textureId[0]) {
-            InputStream iStream = FileHelper.readFromAsserts(this.context, path);
-
-            if (null != iStream) {
-                Bitmap bitmap = BitmapFactory.decodeStream(iStream);
-
-                result = new int[3];
-                result[0] = textureId[0]; // TEXTURE_ID
-                result[1] = bitmap.getWidth(); // TEXTURE_WIDTH
-                result[2] = bitmap.getHeight(); /// TEXTURE_HEIGHT
-
-                // 链接纹理到OpenGL
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId[0]);
-                GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
-                        GLES20.GL_LINEAR);
-                GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
-                        GLES20.GL_NEAREST);
-                GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
-                        GLES20.GL_CLAMP_TO_EDGE);
-                GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
-                        GLES20.GL_CLAMP_TO_EDGE);
-
-                GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-                bitmap.recycle();
-            }
-        }
-
-        return result;
-    }
-
-    public void drawImage(Image img, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh) {
-        int texture = TextureHelper.loadTexture(img, sx, sy, sw, sh);
-        if (texture != 0) {
-            float[] VERTEX_DATA = {
-                    // Order of coordinates: X, Y, S, T
-                    // Triangle Fan
-                    dx, dy + dh, 0, 1f, // 下
-                    dx + dw, dy + dh, 1f, 1f, // 右
-                    dx, dy, 0, 0, // 上
-                    dx + dw, dy + dh, 1f, 1f, // 下
-                    dx + dw, dy, 1f, 0, // 右
-                    dx, dy, 0, 0 // 上
-            };
-
-
-            VertexArray va = new VertexArray(VERTEX_DATA);
-            va.setVertexAttribPointer(
-                    0,
-                    textureProgram.getPositionAttributeLocation(),
-                    2,
-                    4 * 4);
-
-            va.setVertexAttribPointer(
-                    2,
-                    textureProgram.getTextureCoordinatesAttributeLocation(),
-                    2,
-                    4 * 4);
-
-            textureProgram.useProgram();
-            textureProgram.setUniforms(Constants.getProjectionMatrix(), texture);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0); // 解除绑定
-            GLES20.glDeleteTextures(1, new int[texture], 0); // 删除纹理
-        } else {
-            Log.w("drawImage", "failed!!");
-        }
-    }
-
-    public void drawImage(Image img, int dx, int dy) {
-        drawImage(img, dx, dy, img.getNaturalWidth(), img.getNaturalHeight());
-    }
-
-    public void drawImage(Image img, int dx, int dy, int dw, int dh) {
-        drawImage(img, 0, 0, img.getNaturalWidth(), img.getNaturalHeight(), dx, dy, dw, dh);
     }
 }

@@ -34,12 +34,12 @@ public class DrawImage {
             float[] VERTEX_DATA = {
                     // Order of coordinates: X, Y, S, T
                     // Triangle Fan
-                    dx, dy + dh, 0, 1f, // ÏÂ
-                    dx + dw, dy + dh, 1f, 1f, // ÓÒ
-                    dx, dy, 0, 0, // ÉÏ
-                    dx + dw, dy + dh, 1f, 1f, // ÏÂ
-                    dx + dw, dy, 1f, 0, // ÓÒ
-                    dx, dy, 0, 0 // ÉÏ
+                    dx, dy + dh, 0, 1f, // ä¸‹
+                    dx + dw, dy + dh, 1f, 1f, // å³
+                    dx, dy, 0, 0, // ä¸Š
+                    dx + dw, dy + dh, 1f, 1f, // ä¸‹
+                    dx + dw, dy, 1f, 0, // å³
+                    dx, dy, 0, 0 // ä¸Š
             };
 
             VertexArray va = new VertexArray(VERTEX_DATA);
@@ -59,8 +59,8 @@ public class DrawImage {
             textureProgram.setUniforms(Constants.getProjectionMatrix(), texture);
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0); // ½â³ı°ó¶¨
-            GLES20.glDeleteTextures(1, new int[texture], 0); // É¾³ıÎÆÀí
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0); // è§£é™¤ç»‘å®š
+            GLES20.glDeleteTextures(1, new int[texture], 0); // åˆ é™¤çº¹ç†
         } else {
             Log.w("drawImage", "failed!!");
         }
@@ -77,12 +77,12 @@ public class DrawImage {
     public static void drawImage(Scriptable params) {
         int len = params.getIds().length;
         Object[] parameters;
-        Method method = drawMethods.get(len); // ¸ù¾İ²ÎÊı¸öÊıÕÒµ½¶ÔÓ¦µÄ·½·¨
+        Method method = drawMethods.get(len); // æ ¹æ®å‚æ•°ä¸ªæ•°æ‰¾åˆ°å¯¹åº”çš„æ–¹æ³•
 
         if (null != method) {
             parameters = new Object[len];
 
-            // ×é×°²ÎÊı
+            // ç»„è£…å‚æ•°
             for (int i = 0; i < len; i++) {
                 if (i == 0) {
                     parameters[0] = params.get(0, params);
@@ -92,7 +92,7 @@ public class DrawImage {
             }
 
             try {
-                // ·´Éäµ÷ÓÃ
+                // åå°„è°ƒç”¨
                 method.invoke(null, parameters);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -105,7 +105,7 @@ public class DrawImage {
     }
 
     static {
-        // ¾²Ì¬¾²Ä¬Ö´ĞĞ, »ñÈ¡ËùÓĞdrawImageµÄ·½·¨£¬·½±ãµ÷ÓÃ
+        // é™æ€é™é»˜æ‰§è¡Œ, è·å–æ‰€æœ‰drawImageçš„æ–¹æ³•ï¼Œæ–¹ä¾¿è°ƒç”¨
         Method[] methods = DrawImage.class.getMethods();
         Method method;
         Class<?> classes[];
