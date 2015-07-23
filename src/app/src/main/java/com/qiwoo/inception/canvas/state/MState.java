@@ -17,7 +17,7 @@ public class MState {
     public int m_fontSize = 14;
     //默认字体
     public Typeface m_typeFace = Typeface.DEFAULT;
-    //m_lineCap
+    public String m_lineCap = "butt";
     //m_lineJoin
     //float m_miterLimit = 10.0;
     float m_shadowBlur = 0;
