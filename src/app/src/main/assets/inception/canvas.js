@@ -10,6 +10,7 @@
      * context对象，提供绘图的所有接口
      */
     var context = {};
+    var slice = Array.prototype.slice;
     /**
      * font设置
      */
@@ -102,8 +103,30 @@
                 $CmdCollector.addCmd('strokeText', [text, x, y]);
             }
         }
-    context.drawImage = function(img, x, y, w, h) {
-        $CmdCollector.addCmd('drawImage', [img, x, y, w, h]);
+    context.drawImage = function() {
+        var len = arguments.length,
+            req = [3, 5, 9],
+            i = 0,
+            params;
+
+        if (!arguments[0] instanceof Image) {
+            throw new Error('The provided value is not of type Image');
+        }
+
+        for (; i < req.length; i++) {
+            if (len < req[i]) {
+                throw new Error('Valid arities are: [3, 5, 9], but ' + len + ' arguments provided.');
+            } else if (len === req[i]) {
+                params = slice.call(arguments, 0);
+                break;
+            }
+        }
+
+        if (!params) {
+            params = slice.call(arguments, 0, req[2]);
+        }
+
+        $CmdCollector.addCmd('drawImage', params);
     }
     context.clearRect = function(x, y, w, h) {
          $CmdCollector.addCmd('clearRect',[x,y,w,h]);
