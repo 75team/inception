@@ -50,6 +50,11 @@
       "title": "text - font filltext stroketext",
       "app": "filltext",
       "description": "文字相关绘制，设置字号字体颜色，衬字等相关操作"
+    },
+    {
+      "title": "lineCap",
+      "app": "linecap",
+      "description": "线的开头部分"
     }
   ]
 }

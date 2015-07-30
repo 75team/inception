@@ -1,5 +1,6 @@
 package com.qiwoo.inception.base;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,8 +29,8 @@ import static android.opengl.GLES20.glDrawArrays;
  */
 public class Text {
     private TextureShaderProgram textureProgram;//纹理着色器
-    public Text(TextureShaderProgram tsp){
-        this.textureProgram = tsp;
+    public Text(Context context){
+        this.textureProgram = new TextureShaderProgram(context);;
     }
 
     /**

@@ -1,11 +1,8 @@
 package com.qiwoo.inception.canvas;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLUtils;
 import android.util.Log;
 
 import com.qiwoo.inception.base.Image;
@@ -14,13 +11,11 @@ import com.qiwoo.inception.canvas.path.Path;
 import com.qiwoo.inception.canvas.state.State;
 import com.qiwoo.inception.canvas.util.FileHelper;
 import com.qiwoo.inception.canvas.util.ShaderHelper;
-import com.qiwoo.inception.canvas.util.TextureHelper;
 import com.qiwoo.inception.canvas.util.TextureShaderProgram;
 import com.qiwoo.inception.canvas.util.VertexArray;
 
 import org.mozilla.javascript.Scriptable;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -158,6 +153,10 @@ public class InRender implements GLSurfaceView.Renderer {
                             params = (Scriptable) cmdItem.get(1);
                             State.setLineWidth(params);
                             break;
+                        case "setLineCap":
+                            params = (Scriptable) cmdItem.get(1);
+                            State.setLineCap(params);
+                            break;
                         case "setFillStyle":
                             params = (Scriptable) cmdItem.get(1);
                             State.setFillStyle(params);
@@ -184,12 +183,12 @@ public class InRender implements GLSurfaceView.Renderer {
                             break;
                         case "fillText":
                             params = (Scriptable) cmdItem.get(1);
-                            Text text = new Text(textureProgram);
+                            Text text = new Text(this.context);
                             text.fillText(params);
                             break;
                         case "strokeText":
                             params = (Scriptable) cmdItem.get(1);
-                            Text textStroke = new Text(textureProgram);
+                            Text textStroke = new Text(this.context);
                             textStroke.strokeText(params);
                             break;
                         default:

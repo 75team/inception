@@ -2,6 +2,8 @@ package com.qiwoo.inception.canvas.state;
 
 import android.graphics.Typeface;
 
+import com.qiwoo.inception.canvas.path.Path;
+
 import org.mozilla.javascript.Scriptable;
 
 import java.util.ArrayList;
@@ -121,5 +123,15 @@ public class State {
     public static void setFillStyle(Scriptable params){
         String color = (String)params.get(0, params);
         curState.m_fillStyle = new Style(color);
+    }
+
+    /**
+     * 线头类型修改，重新计算path的网格
+     * @param params
+     */
+    public static void setLineCap(Scriptable params){
+        String lineCap = (String)params.get(0, params);
+        curState.m_lineCap = lineCap;
+        Path.rebuildMesh();
     }
 }

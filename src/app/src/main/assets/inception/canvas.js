@@ -47,6 +47,12 @@
     context.__defineSetter__("lineWidth", function(val){
         $CmdCollector.addCmd('setLineWidth', [val]);
     });
+    //线头样式
+    context.__defineSetter__("lineCap", function(val){
+        if(val!='butt' && val!="round" && val!="square")
+            val='butt';
+        $CmdCollector.addCmd('setLineCap', [val]);
+    });
 
     //state处理
     context.save = function(){
