@@ -84,6 +84,11 @@ public class Path {
         startPoint_y = y;
         isBroken = true;
         haveStartPoint = true;
+
+        if(segmentList.size()>0){
+            Segment sm = (Segment)segmentList.get(segmentList.size() - 1);
+            sm.needEndCap = true;
+        }
     }
     private static float[] normalizeAngles(float startAngle, float endAngle, boolean anticlockwise)
     {
@@ -128,18 +133,7 @@ public class Path {
         float endAngle = ((Number)params.get(4, params)).floatValue();
         boolean anticlockwise = (Boolean)params.get(5, params);
         float deltaAngle = startAngle-endAngle;
-        /*startAngle = (float)(startAngle%(2*Math.PI));
-        endAngle = (float)(endAngle%(2*Math.PI));
-        Log.i("ss", String.valueOf(endAngle));
-        if(anticlockwise){
-            if(endAngle>=startAngle)
-                endAngle -= Math.PI*2;
-        }else {
-            if (startAngle >= endAngle)
-                endAngle += Math.PI * 2;
-        }
-        Log.i("ss", String.valueOf(endAngle));
-        */
+
         float[] angles = normalizeAngles(startAngle, endAngle, anticlockwise);
         Log.i("info", String.valueOf(startAngle)+" "+String.valueOf(endAngle)+" "+String.valueOf(anticlockwise));
         startAngle = angles[0];
@@ -236,6 +230,7 @@ public class Path {
         Iterator it = segmentList.iterator();
         while (it.hasNext()) {
             Segment segment = (Segment) it.next();
+            boolean needEndCap = segment.needEndCap || !it.hasNext();
             float[] params = segment.params;
             switch (segment.type){
                 case LINE_TO:
@@ -244,6 +239,13 @@ public class Path {
                                 new float[]{params[0]-params[2], params[1]-params[3]},
                                 params[0],
                                 params[1]
+                        );
+                    }
+                    if(needEndCap){
+                        buildCap(
+                                new float[]{params[2]-params[0], params[3]-params[1]},
+                                params[2],
+                                params[3]
                         );
                     }
                     buildRectMesh(
@@ -279,7 +281,24 @@ public class Path {
                         }
                     }
 
-                    Log.i("ss", Arrays.toString(params));
+                    if(needEndCap){
+                        float end_x = x + (float)Math.cos(endAngle)*radius;
+                        float end_y = x + (float)Math.sin(endAngle)*radius;
+                        if(antiClockwise<1){
+                            buildCap(
+                                    new float[]{end_y-y, -(end_x-x)},
+                                    end_x,
+                                    end_y
+                            );
+                        }else{
+                            buildCap(
+                                    new float[]{-(end_y-y), end_x-x},
+                                    end_x,
+                                    end_y
+                            );
+                        }
+                    }
+
                     buildArcMesh(x, y, radius, startAngle, endAngle, antiClockwise);
 
                     break;
@@ -373,7 +392,6 @@ public class Path {
                 x1-x,
                 y1-y
         };
-        float vectorLenght = PathUtil.getVectorLength(directionVector);
         float[] normalVector = PathUtil.getNormalVector(directionVector);
         float[] delta = {
                 normalVector[0] * width/2,
@@ -438,12 +456,39 @@ public class Path {
             float radius,
             double startAngle,
             double angle
-    ){}
+    ){
+        int divCount = 2*PathUtil.getDivCount(radius*angle);
+        float[] vertexes = new float[divCount*2*3];
+        float p0_x=0, p0_y=0;
+        double perAngle = angle/divCount,
+                curAngle;
+        for(int i=0;i<=divCount;i++){
+            if(i==divCount)
+                curAngle = startAngle+angle;
+            else
+                curAngle = startAngle+i*perAngle;
+            float p1_x = x + (float)(radius*Math.cos(curAngle));
+            float p1_y = y + (float)(radius*Math.sin(curAngle));
+
+            if(i>0){
+                vertexes[6*(i-1)] = x;
+                vertexes[6*(i-1)+1] = y;
+                vertexes[6*(i-1)+2] = p1_x;
+                vertexes[6*(i-1)+3] = p1_y;
+                vertexes[6*(i-1)+4] = p0_x;
+                vertexes[6*(i-1)+5] = p0_y;
+            }
+            p0_x = p1_x;
+            p0_y = p1_y;
+        }
+        addMesh(vertexes);
+    }
     public static void buildCap(float[] directionVector, float x, float y){
-        if(lineCap=="squre"){
+        if(lineCap.equals("square")){
+            Log.i("info", "build cap");
             buildRectMesh( x, y, lineWidth, lineWidth/2, directionVector);
-        }else if(lineCap=="round"){
-            double startAngle = Math.atan2(directionVector[1], directionVector[0])-Math.PI;
+        }else if(lineCap.equals("round")){
+            double startAngle = Math.atan2(directionVector[1], directionVector[0])-Math.PI/2;
             buildRoundMesh(x, y, lineWidth / 2, startAngle, Math.PI);
         }
     }

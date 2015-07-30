@@ -153,6 +153,10 @@ public class InRender implements GLSurfaceView.Renderer {
                             params = (Scriptable) cmdItem.get(1);
                             State.setLineWidth(params);
                             break;
+                        case "setLineCap":
+                            params = (Scriptable) cmdItem.get(1);
+                            State.setLineCap(params);
+                            break;
                         case "setFillStyle":
                             params = (Scriptable) cmdItem.get(1);
                             State.setFillStyle(params);

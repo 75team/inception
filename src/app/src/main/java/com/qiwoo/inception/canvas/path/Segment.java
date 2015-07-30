@@ -7,6 +7,7 @@ public class Segment {
     SegmentType type;
     float[] params;
     boolean needStartCap = false;
+    boolean needEndCap = false;
     public Segment(SegmentType st, float[] params){
         type = st;
         this.params = params;
