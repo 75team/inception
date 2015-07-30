@@ -85,7 +85,7 @@ public class Path {
         isBroken = true;
         haveStartPoint = true;
     }
-    private static void normalizeAngles(float startAngle, float endAngle, boolean anticlockwise)
+    private static float[] normalizeAngles(float startAngle, float endAngle, boolean anticlockwise)
     {
         float newStartAngle = startAngle;
         if (newStartAngle < 0)
@@ -101,17 +101,34 @@ public class Path {
             endAngle = startAngle - 2 * piFloat;
         else if (!anticlockwise && endAngle - startAngle >= 2 * piFloat)
             endAngle = startAngle + 2 * piFloat;
+
+        if(!anticlockwise && endAngle < startAngle){
+            endAngle = twoPIFloat + endAngle%twoPIFloat;
+            if(endAngle < startAngle)
+                endAngle += twoPIFloat;
+        }
+        if(anticlockwise && endAngle>startAngle){
+            endAngle = endAngle%twoPIFloat;
+            if(endAngle>startAngle)
+                endAngle -= twoPIFloat;
+        }
+        return new float[]{startAngle, endAngle};
     }
+
+    /**
+     * 1,-1
+     * 3,-3  5,-5
+     *
+     */
     public static void arc(Scriptable params){
         float x = ((Number)params.get(0, params)).floatValue();
         float y = ((Number)params.get(1, params)).floatValue();
         float radius = ((Number)params.get(2, params)).floatValue();
         float startAngle = ((Number)params.get(3, params)).floatValue();
         float endAngle = ((Number)params.get(4, params)).floatValue();
-        Log.i("ss", String.valueOf(endAngle));
         boolean anticlockwise = (Boolean)params.get(5, params);
         float deltaAngle = startAngle-endAngle;
-        startAngle = (float)(startAngle%(2*Math.PI));
+        /*startAngle = (float)(startAngle%(2*Math.PI));
         endAngle = (float)(endAngle%(2*Math.PI));
         Log.i("ss", String.valueOf(endAngle));
         if(anticlockwise){
@@ -122,9 +139,15 @@ public class Path {
                 endAngle += Math.PI * 2;
         }
         Log.i("ss", String.valueOf(endAngle));
+        */
+        float[] angles = normalizeAngles(startAngle, endAngle, anticlockwise);
+        Log.i("info", String.valueOf(startAngle)+" "+String.valueOf(endAngle)+" "+String.valueOf(anticlockwise));
+        startAngle = angles[0];
+        endAngle = angles[1];
         float[] ps = {
                 x,y,radius,startAngle,endAngle,anticlockwise?1:0
         };
+        Log.i("info", Arrays.toString(ps));
 
         if(haveStartPoint){
             float to_x = x + (float)Math.cos(startAngle)*radius;
@@ -136,7 +159,7 @@ public class Path {
             ));
             isBroken = false;
         }
-        Log.i("info", "add delta angle");
+
         if(deltaAngle != 0) {
             Log.i("info", "add arc");
             segmentList.add(new Segment(
@@ -363,12 +386,7 @@ public class Path {
         addMesh(vertexes);
     }
     public static void buildArcMesh(float x, float y, float radius, float startAngle, float endAngle, float antiClockwise){
-        if(antiClockwise>0){
-            float tmp = startAngle;
-            startAngle = endAngle;
-            endAngle = tmp;
-        }
-        int divCount = PathUtil.getDivCount(Math.PI*(endAngle-startAngle));
+        int divCount = PathUtil.getDivCount(radius*(antiClockwise>0.0 ? startAngle-endAngle : endAngle-startAngle));
 
         float[] vertexes = new float[2*3*2*divCount];
 
