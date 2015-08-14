@@ -191,6 +191,10 @@ public class InRender implements GLSurfaceView.Renderer {
                             Text textStroke = new Text(this.context);
                             textStroke.strokeText(params);
                             break;
+                        case "createLinearGradient":
+                            params = (Scriptable) cmdItem.get(1);
+                            State.createLinearGradient(params);
+                            break;
                         default:
                             Log.i("error", cmdName + " is not valid");
                     }

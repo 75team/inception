@@ -89,11 +89,16 @@ public class Text {
         //画笔颜色
         Style fillStyle = State.curState.m_fillStyle;
         if (fillStyle.type == Style.Color) {
+            //AGBA
             R = Color.red(fillStyle.color);
             G = Color.green(fillStyle.color);
             B = Color.blue(fillStyle.color);
+            textPaint.setARGB(255, R, G, B);
+        }else if (fillStyle.type == Style.Gradient){
+            //gradient
+            textPaint.setShader(fillStyle.getGradientShader());
         }
-        textPaint.setARGB(255, R, G, B);
+
         //画笔文字大小
         textPaint.setTextSize(textSize);
         //画笔字体
@@ -107,8 +112,8 @@ public class Text {
         Bitmap bitmap = Bitmap.createBitmap(sw, sh, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         //背景透明
-        //canvas.drawARGB(0, 0, 0, 0);
-        canvas.drawARGB(255, 255, 255, 0);
+//        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawARGB(0, 255, 255, 255);
         //绘制
         int textline = (int)Math.round(-fm.ascent);
         canvas.drawText(text, 0, textline, textPaint);
@@ -186,7 +191,7 @@ public class Text {
         Canvas canvas = new Canvas(bitmap);
         //背景透明
         //canvas.drawARGB(0, 0, 0, 0);
-        canvas.drawARGB(255, 255, 255, 0);
+        canvas.drawARGB(0, 255, 255, 255);
         //绘制
         int textline = (int)Math.round(-fm.ascent);
         canvas.drawText(text, 0, textline, strokePaint);

@@ -175,7 +175,7 @@ public class InScript extends ScriptableObject implements Runnable {
                     ScriptableObject.DONTENUM);
 
             String incepFoler = "/assets/inception/";
-            String[] jsFiles = {incepFoler+"timer.js", incepFoler+"net.js", incepFoler+"Color.js", incepFoler+"canvas.js", "index.js" };//"r.js","loader.js"
+            String[] jsFiles = {incepFoler+"timer.js", incepFoler+"net.js", incepFoler+"Color.js", incepFoler+"Gradient.js", incepFoler+"canvas.js", "index.js" };//"r.js","loader.js"
 //			FunctionObject f = (FunctionObject) globalScope.get("emptyFunc", globalScope);
 //			InScript.load(cx, globalScope, jsFiles, f);
             ScriptableObject.callMethod(globalScope, "load", jsFiles);

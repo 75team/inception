@@ -30,7 +30,13 @@
 //        inContext.setFillStyle(rgba.a, rgba.r, rgba.g, rgba.b);
 //    });
     context.__defineSetter__("fillStyle", function(val){
-        $CmdCollector.addCmd('setFillStyle', [val]);
+        if(val instanceof LinearGradient){
+            //线性渐变
+            $CmdCollector.addCmd('createLinearGradient', [val.startX, val.startY, val.endX, val.endY, val.stops, val.colors]);
+        }else{
+            //普通着色
+            $CmdCollector.addCmd('setFillStyle', [val]);
+        }
     });
 
     //线条颜色
@@ -108,7 +114,10 @@
             }else{
                 $CmdCollector.addCmd('strokeText', [text, x, y]);
             }
-        }
+    }
+    context.createLinearGradient = function(x0, y0, x1, y1){
+        return new LinearGradient(x0, y0, x1, y1);
+    }
     context.drawImage = function() {
         var len = arguments.length,
             req = [3, 5, 9],

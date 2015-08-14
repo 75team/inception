@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 
 import com.qiwoo.inception.canvas.path.Path;
 
+import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by liupengke on 15/6/11.
+ * Modified by GR on 15/7/28. add gradient
  */
 public class State {
     private static ArrayList<MState> stateStack = new ArrayList();
@@ -133,5 +135,43 @@ public class State {
         String lineCap = (String)params.get(0, params);
         curState.m_lineCap = lineCap;
         Path.rebuildMesh();
+    }
+
+    /**
+     * 创建线性渐变对象
+     * @param params
+     */
+    public static void createLinearGradient(Scriptable params){
+        float startX = ((Number)params.get(0, params)).floatValue();
+        float startY = ((Number)params.get(1, params)).floatValue();
+        float endX = ((Number)params.get(2, params)).floatValue();
+        float endY = ((Number)params.get(3, params)).floatValue();
+
+        curState.m_fillStyle = new Style(startX, startY, endX, endY);
+
+        NativeArray arrStops = (NativeArray)params.get(4, params);
+        ArrayList<Float> stops = (ArrayList<Float>)nativeArray2ArrayListFloat(arrStops);
+        NativeArray colorStops = (NativeArray)params.get(5, params);
+        ArrayList<Integer> colors = (ArrayList<Integer>)nativeArrayColor2ArrayList(colorStops);
+        //设置颜色断点
+        curState.m_fillStyle.setColorStop(stops, colors);
+    }
+
+    public static ArrayList nativeArray2ArrayListFloat(NativeArray arr){
+        ArrayList arrList = new ArrayList();
+        for (Object o : arr.getIds()){
+            int i = (Integer) o;
+            arrList.add(arr.get(i, null));
+        }
+        return arrList;
+    }
+
+    public static ArrayList nativeArrayColor2ArrayList(NativeArray arr){
+        ArrayList arrList = new ArrayList();
+        for (Object o : arr.getIds()){
+            int i = (Integer) o;
+            arrList.add(android.graphics.Color.parseColor((String)arr.get(i, null)));
+        }
+        return arrList;
     }
 }
