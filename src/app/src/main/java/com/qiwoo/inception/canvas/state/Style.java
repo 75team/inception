@@ -1,6 +1,7 @@
 package com.qiwoo.inception.canvas.state;
 
 import android.graphics.LinearGradient;
+import android.graphics.RadialGradient;
 import android.graphics.Shader;
 
 import java.util.ArrayList;
@@ -23,11 +24,15 @@ public class Style {
      * 默认线性渐变
      */
     private int gradientType = 1;
-    /* 起始坐标 */
+    /* 起始坐标(linearGradient) */
     private float startX;
     private float startY;
     private float endX;
     private float endY;
+    /* 圆心坐标半径(radialGradient) */
+    private float centerX;
+    private float centerY;
+    private float radius;
     /* 颜色断点 */
     private ArrayList<Integer> grdColors = new ArrayList<Integer>();
     private ArrayList<Float> grdStops = new ArrayList<Float>();
@@ -50,7 +55,20 @@ public class Style {
         this.endX = x1;
         this.endY = y1;
     }
+    public Style(float centerX, float centerY, float radius){
+        //放射性渐变初始化
+        type = Style.Gradient;
+        this.gradientType = 2;
+        this.centerX = centerX;
+        this.centerY = centerY;
+        this.radius = radius;
+    }
 
+    /**
+     * 设置渐变的颜色断点
+     * @param stops
+     * @param colors
+     */
     public void setColorStop(ArrayList<Float> stops, ArrayList<Integer> colors){
         //直接设置断点集合
         this.grdStops = stops;
@@ -63,6 +81,10 @@ public class Style {
 //        this.grdColors.add(android.graphics.Color.parseColor(color));
 //    }
 
+    /**
+     * 生成图像渲染对象
+     * @return Shader
+     */
     public Shader getGradientShader(){
         Shader shader = new Shader();
         //返回当前设置下的相应shader
@@ -76,12 +98,21 @@ public class Style {
                 break;
             case 2:
                 //放射性渐变
+                shader = new RadialGradient(this.centerX, this.centerY, this.radius,
+                        this.toIntArray(this.grdColors),
+                        this.toFloatArray(this.grdStops),
+                        this.tile);
                 break;
         }
 
         return shader;
     }
 
+    /**
+     * 类型转换
+     * @param list
+     * @return int[]
+     */
     private int[] toIntArray(ArrayList list){
         int len = list.size();
         int[] intArray = new int[len];
@@ -90,6 +121,12 @@ public class Style {
         }
         return intArray;
     }
+
+    /**
+     * 类型转换
+     * @param list
+     * @return
+     */
     private float[] toFloatArray(ArrayList list){
         int len = list.size();
         float[] floatArray = new float[len];

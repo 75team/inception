@@ -87,7 +87,7 @@ public class Text {
         //抗锯齿效率较低
         //textPaint.setAntiAlias(true);
         //画笔颜色
-        Style fillStyle = State.curState.m_fillStyle;
+        Style fillStyle = State.curState.m_style;
         if (fillStyle.type == Style.Color) {
             //AGBA
             R = Color.red(fillStyle.color);
@@ -95,7 +95,7 @@ public class Text {
             B = Color.blue(fillStyle.color);
             textPaint.setARGB(255, R, G, B);
         }else if (fillStyle.type == Style.Gradient){
-            //gradient
+            //gradient(会自动返回linearGradient或radialGradient的shader)
             textPaint.setShader(fillStyle.getGradientShader());
         }
 
@@ -168,13 +168,17 @@ public class Text {
         //抗锯齿效率较低
         //strokePaint.setAntiAlias(true);
         //stroke颜色
-        Style strokeStyle = State.curState.m_strokeStyle;
+        Style strokeStyle = State.curState.m_style;
         if (strokeStyle.type == Style.Color) {
             R = Color.red(strokeStyle.color);
             G = Color.green(strokeStyle.color);
             B = Color.blue(strokeStyle.color);
+            strokePaint.setARGB(255, R, G, B);
+        }else if (strokeStyle.type == Style.Gradient){
+            //gradient(会自动返回linearGradient或radialGradient的shader)
+            strokePaint.setShader(strokeStyle.getGradientShader());
         }
-        strokePaint.setARGB(255, R, G, B);
+
         strokePaint.setTextSize(textSize);
         //画笔字体
         strokePaint.setTypeface(typeFace);

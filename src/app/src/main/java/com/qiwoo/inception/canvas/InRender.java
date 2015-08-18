@@ -82,16 +82,16 @@ public class InRender implements GLSurfaceView.Renderer {
         viewHeight = height;
 
         //正交投影短阵设定，它实现了下面两个功能
-        // 1、保证我们程序中使用的坐标系元点(0,0)在左上角，跟浏览器一致，而不是opengl中统一坐标系的屏幕中心点
+        // 1、保证我们程序中使用的坐标系元点(0,0)在左上角，跟浏览器一致，而不是opengl中同一坐标系的屏幕中心点
         // 2、保证我们操作的高宽是屏幕高宽，而不是统一坐标系的-1到1
         ratio = (float) width/height;
         final float aspectRatio = width > height ?
                 (float) width / (float) height :
                 (float) height / (float) width;
 
-            float[] projectionMatrix = new float[16];
-            orthoM(projectionMatrix, 0, 0, (float)width, (float)viewHeight, 0f, -1f, 1f);
-            Constants.setProjectionMatrix(projectionMatrix);
+        float[] projectionMatrix = new float[16];
+        orthoM(projectionMatrix, 0, 0, (float)width, (float)viewHeight, 0f, -1f, 1f);
+        Constants.setProjectionMatrix(projectionMatrix);
 
         screenBuffer = new ScreenBuffer(viewWidth, viewHeight, context);
         Path.init(context, mProgram, maPositionHandle, maColorHandle, muMatrixHandle);
@@ -194,6 +194,10 @@ public class InRender implements GLSurfaceView.Renderer {
                         case "createLinearGradient":
                             params = (Scriptable) cmdItem.get(1);
                             State.createLinearGradient(params);
+                            break;
+                        case "createRadialGradient":
+                            params = (Scriptable) cmdItem.get(1);
+                            State.createRadialGradient(params);
                             break;
                         default:
                             Log.i("error", cmdName + " is not valid");
