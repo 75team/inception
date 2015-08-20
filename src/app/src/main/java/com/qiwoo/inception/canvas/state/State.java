@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 
 import com.qiwoo.inception.canvas.path.Path;
 
+import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by liupengke on 15/6/11.
+ * Modified by GR on 15/7/28. add gradient
  */
 public class State {
     private static ArrayList<MState> stateStack = new ArrayList();
@@ -51,6 +53,11 @@ public class State {
         }
     }
 
+    /**
+     * px像素值到sp值的转换
+     * @param pxValue
+     * @return sp值
+     */
     public static int px2sp(float pxValue) {
         float fontScale = State.curState.m_fontScale;
         return (int) (pxValue / fontScale + 0.5f);
@@ -74,7 +81,7 @@ public class State {
     }
 
     /**
-     * 设置字体
+     * 设置字体 当前支持系统四种字体
      * @param typeFace
      */
     public static void setTypeFace(String typeFace){
@@ -104,7 +111,7 @@ public class State {
      */
     public static void setStrokeStyle(Scriptable params){
         String color = (String)params.get(0, params);
-        curState.m_strokeStyle = new Style(color);
+        curState.m_style = new Style(color);
     }
 
     /**
@@ -122,7 +129,7 @@ public class State {
      */
     public static void setFillStyle(Scriptable params){
         String color = (String)params.get(0, params);
-        curState.m_fillStyle = new Style(color);
+        curState.m_style = new Style(color);
     }
 
     /**
@@ -133,5 +140,66 @@ public class State {
         String lineCap = (String)params.get(0, params);
         curState.m_lineCap = lineCap;
         Path.rebuildMesh();
+    }
+
+    /**
+     * 创建线性渐变对象
+     * @param params
+     */
+    public static void createLinearGradient(Scriptable params){
+        //起始坐标值
+        float startX = ((Number)params.get(0, params)).floatValue();
+        float startY = ((Number)params.get(1, params)).floatValue();
+        float endX = ((Number)params.get(2, params)).floatValue();
+        float endY = ((Number)params.get(3, params)).floatValue();
+
+        curState.m_style = new Style(startX, startY, endX, endY);
+
+        NativeArray arrStops = (NativeArray)params.get(4, params);
+        ArrayList<Float> stops = (ArrayList<Float>)nativeArray2ArrayListFloat(arrStops);
+        NativeArray colorStops = (NativeArray)params.get(5, params);
+        ArrayList<Integer> colors = (ArrayList<Integer>)nativeArrayColor2ArrayList(colorStops);
+        //设置颜色断点
+        curState.m_style.setColorStop(stops, colors);
+    }
+
+    /**
+     * 创建放射性渐变对象
+     * @param params
+     */
+    public static void createRadialGradient(Scriptable params){
+        //圆心坐标
+        float centerX = ((Number)params.get(0, params)).floatValue();
+        float centerY = ((Number)params.get(1, params)).floatValue();
+        float radius = ((Number)params.get(2, params)).floatValue();
+
+        curState.m_style = new Style(centerX, centerY, radius);
+
+        NativeArray arrStops = (NativeArray)params.get(3, params);
+        ArrayList<Float> stops = (ArrayList<Float>)nativeArray2ArrayListFloat(arrStops);
+        NativeArray colorStops = (NativeArray)params.get(4, params);
+        ArrayList<Integer> colors = (ArrayList<Integer>)nativeArrayColor2ArrayList(colorStops);
+        //设置颜色断点
+        curState.m_style.setColorStop(stops, colors);
+    }
+
+    public static ArrayList nativeArray2ArrayListFloat(NativeArray arr){
+        //类型转换
+        ArrayList arrList = new ArrayList();
+        for (Object o : arr.getIds()){
+            int i = (Integer) o;
+            arrList.add(arr.get(i, null));
+        }
+        return arrList;
+    }
+
+    public static ArrayList nativeArrayColor2ArrayList(NativeArray arr){
+        //类型转换
+        ArrayList arrList = new ArrayList();
+        for (Object o : arr.getIds()){
+            int i = (Integer) o;
+            arrList.add(android.graphics.Color.parseColor((String)arr.get(i, null)));
+        }
+        return arrList;
     }
 }

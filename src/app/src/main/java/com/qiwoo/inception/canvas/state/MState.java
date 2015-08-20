@@ -5,13 +5,13 @@ import android.graphics.Typeface;
 
 /**
  * Created by liupengke on 15/6/11.
+ * Modified by GR on 15/7/15. default value of font
  */
 public class MState {
     //px=>sp转换使用的系数，大多数情况下是1.5
     float m_fontScale = 1.5f;
 
-    public Style m_strokeStyle = new Style();
-    public Style m_fillStyle = new Style();
+    public Style m_style = new Style();
     public float m_lineWidth = 1;
     //默认14sp
     public int m_fontSize = 14;
@@ -31,8 +31,7 @@ public class MState {
 
     }
     public MState(MState mState){
-        this.m_strokeStyle = mState.m_strokeStyle;
-        this.m_fillStyle = mState.m_fillStyle;
+        this.m_style = mState.m_style;
         this.m_lineWidth = mState.m_lineWidth;
         this.m_shadowBlur = mState.m_shadowBlur;
         this.m_shadowColor = mState.m_shadowColor;

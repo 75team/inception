@@ -29,12 +29,11 @@ public class AppActivity extends Activity {
             isGlSet = true;
             glSurfaceView.setEGLContextClientVersion(2);
 
-
             Intent intent = getIntent();
             String appName = intent.getStringExtra("appName");
-
+            //命令列表
             ArrayList cmdList = new ArrayList();
-
+            //设置渲染器
             glSurfaceView.setRenderer(new InRender(this, cmdList));
 
 

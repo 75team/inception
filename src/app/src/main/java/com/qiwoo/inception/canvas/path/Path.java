@@ -2,7 +2,6 @@ package com.qiwoo.inception.canvas.path;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.view.NestedScrollingParentHelper;
 import android.util.Log;
 
 import com.qiwoo.inception.canvas.Constants;
@@ -11,21 +10,13 @@ import com.qiwoo.inception.canvas.state.Style;
 import com.qiwoo.inception.canvas.util.VertexArray;
 
 import org.mozilla.javascript.Scriptable;
-import java.lang.Math;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import javax.microedition.khronos.opengles.GL10;
-
-import static android.opengl.GLES20.GL_NICEST;
 import static android.opengl.GLES20.GL_TRIANGLES;
 import static android.opengl.GLES20.glDrawArrays;
-import static android.opengl.GLES20.glDrawElements;
-import static android.opengl.GLES20.glEnable;
-import static android.opengl.GLES20.glHint;
-import static android.opengl.GLES20.glUniform4f;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 
@@ -196,7 +187,7 @@ public class Path {
     }
     public static void bezierCurveTo(Scriptable params){}
     public static void stroke(){
-        Style strokeStyle = State.curState.m_strokeStyle;
+        Style strokeStyle = State.curState.m_style;
         if(strokeStyle.type == Style.Color) {
             float r = Color.red(strokeStyle.color);
             float g = Color.green(strokeStyle.color);

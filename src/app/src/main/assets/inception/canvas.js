@@ -30,7 +30,16 @@
 //        inContext.setFillStyle(rgba.a, rgba.r, rgba.g, rgba.b);
 //    });
     context.__defineSetter__("fillStyle", function(val){
-        $CmdCollector.addCmd('setFillStyle', [val]);
+        if(val instanceof LinearGradient){
+            //线性渐变
+            $CmdCollector.addCmd('createLinearGradient', [val.startX, val.startY, val.endX, val.endY, val.stops, val.colors]);
+        }else if(val instanceof RadialGradient){
+            //放射性渐变
+            $CmdCollector.addCmd('createRadialGradient', [val.centerX, val.centerY, val.radius, val.stops, val.colors]);
+        }else{
+            //普通着色
+            $CmdCollector.addCmd('setFillStyle', [val]);
+        }
     });
 
     //线条颜色
@@ -38,7 +47,16 @@
         return fillStyle;
     });
     context.__defineSetter__("strokeStyle", function(val){
-        $CmdCollector.addCmd('setStrokeStyle', [val]);
+        if(val instanceof LinearGradient){
+            //线性渐变
+            $CmdCollector.addCmd('createLinearGradient', [val.startX, val.startY, val.endX, val.endY, val.stops, val.colors]);
+        }else if(val instanceof RadialGradient){
+            //放射性渐变
+            $CmdCollector.addCmd('createRadialGradient', [val.centerX, val.centerY, val.radius, val.stops, val.colors]);
+        }else{
+            //普通着色
+            $CmdCollector.addCmd('setStrokeStyle', [val]);
+        }
     });
     //线条宽度
     context.__defineGetter__("lineWidth", function(){
@@ -108,7 +126,13 @@
             }else{
                 $CmdCollector.addCmd('strokeText', [text, x, y]);
             }
-        }
+    }
+    context.createLinearGradient = function(x0, y0, x1, y1){
+        return new LinearGradient(x0, y0, x1, y1);
+    }
+    context.createRadialGradient = function(x, y, r){
+        return new RadialGradient(x, y, r);
+    }
     context.drawImage = function() {
         var len = arguments.length,
             req = [3, 5, 9],

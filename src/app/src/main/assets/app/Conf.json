@@ -55,6 +55,11 @@
       "title": "lineCap",
       "app": "linecap",
       "description": "线的开头部分"
+    },
+    {
+      "title": "gradient",
+      "app": "gradient",
+      "description": "渐变对象"
     }
   ]
 }
