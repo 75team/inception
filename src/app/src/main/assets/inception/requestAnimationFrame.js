@@ -29,7 +29,7 @@
         var cur = queue,
             tmp;
 
-        queue = []; // ´´½¨ÏÂÒ»Ö¡µÄ¶ÓÁÐ
+        queue = []; // åˆ›å»ºæ–°é˜Ÿåˆ—
         tmp = cur.shift();
 
         while (tmp) {
