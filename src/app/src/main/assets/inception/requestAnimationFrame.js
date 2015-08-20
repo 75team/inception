@@ -26,9 +26,11 @@
     }
 
     function frameAction() {
-        var cur = queue;
-        queue = [];
-        var tmp = cur.shift();
+        var cur = queue,
+            tmp;
+
+        queue = []; // 创建下一帧的队列
+        tmp = cur.shift();
 
         while (tmp) {
             tmp.fn(this);
