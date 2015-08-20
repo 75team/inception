@@ -29,7 +29,7 @@ require("index", function () {
         ySpeed = 0,
         curDir = DIRECTIONS.RIGHT,
         curFrame = 0;
-    log(canvasWidth + " ######## " + canvasHeight);
+	log(canvasWidth + " ######## " + canvasHeight);
     function draw() {
         ctx.clearRect(0 ,0 , canvasWidth, canvasHeight);
         if (curFrame >= 12) curFrame = 0;
@@ -57,6 +57,10 @@ require("index", function () {
         y += ySpeed;
         ctx.drawImage(imgs[curDir * 12 + curFrame], x, y, w, h);
         curFrame++;
+
+        requestAnimationFrame(draw);
     }
-    setInterval(draw, 100);
+
+    requestAnimationFrame(draw);
+//    setInterval(draw, 100);
 });

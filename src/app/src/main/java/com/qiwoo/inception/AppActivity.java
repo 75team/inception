@@ -33,6 +33,10 @@ public class AppActivity extends Activity {
             String appName = intent.getStringExtra("appName");
             //命令列表
             ArrayList cmdList = new ArrayList();
+
+            //Android 低端模拟器开启，否则无法运行
+            // glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+
             //设置渲染器
             glSurfaceView.setRenderer(new InRender(this, cmdList));
 

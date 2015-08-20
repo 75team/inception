@@ -4,7 +4,6 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
-
 import com.qiwoo.inception.base.Image;
 import com.qiwoo.inception.base.Text;
 import com.qiwoo.inception.canvas.path.Path;
@@ -13,14 +12,12 @@ import com.qiwoo.inception.canvas.util.FileHelper;
 import com.qiwoo.inception.canvas.util.ShaderHelper;
 import com.qiwoo.inception.canvas.util.TextureShaderProgram;
 import com.qiwoo.inception.canvas.util.VertexArray;
-
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
-
 import java.util.ArrayList;
-
+import java.util.Date;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
 import static android.opengl.GLES20.GL_BLEND;
 import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
 import static android.opengl.GLES20.GL_SRC_ALPHA;
@@ -43,6 +40,11 @@ public class InRender implements GLSurfaceView.Renderer {
     private int viewWidth;
     private int viewHeight;
     private float ratio;
+
+    private long curTime;
+    private long lastTime = -1;
+    private int limitStep = 16;
+
     private TextureShaderProgram textureProgram;
 
     int mProgram, maPositionHandle, maColorHandle, muMatrixHandle;
@@ -107,6 +109,32 @@ public class InRender implements GLSurfaceView.Renderer {
         screenBuffer.openBuffer();
         screenBuffer.drawPreviousFrame();
 
+        // 提前消费requestAnimationFrame队列中积压的函数，保证在当前帧的动作都全部添加到cmdList
+        Object fn;
+        org.mozilla.javascript.Context cx = org.mozilla.javascript.Context.enter();
+        try {
+            fn = InScript.globalScope.get("frameAction", InScript.globalScope);
+
+            if (null != fn && fn instanceof Function) {
+                curTime = new Date().getTime();
+
+                if (-1 == lastTime) {
+                    lastTime = curTime;
+                }
+
+                // 如果两次时间间隔大于指定的阀值，就去消费回调
+                if (curTime - lastTime >= limitStep) {
+                    Function fun = (Function) fn;
+                    fun.call(cx, InScript.globalScope, InScript.globalScope, new Object[]{});
+
+                    lastTime = curTime;
+                }
+            }
+        } catch (Exception e) {
+            Log.d("FrameError", e.toString());
+        } finally {
+            cx.exit();
+        }
 
         synchronized (cmdList) {
             //命令分发消费中心，把绘图命令交给相应模块处理
@@ -208,7 +236,6 @@ public class InRender implements GLSurfaceView.Renderer {
             }
         }
         screenBuffer.drawFrame();
-
     }
 
     private void fillRect(Scriptable params){
